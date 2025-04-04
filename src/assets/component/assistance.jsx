@@ -153,7 +153,7 @@ const Assistance = ({ user }) => {
                 <strong>Datos no se actualizan:</strong> Intenta recargar la página o cerrar y volver a abrir la aplicación.
               </li>
               <li>
-                <strong>Contacto directo:</strong> Si es urgente, escribe a soporte@listademercado.com
+                <strong>Contacto directo:</strong> Si es urgente, escribe a alejandroeduard2019@gmail.com.com
               </li>
             </ul>
           </div>

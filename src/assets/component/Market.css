@@ -1089,3 +1089,137 @@ body {
     font-size: 0.9rem;
   }
 }
+
+.stores-section {
+  background-color: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+  border: 2px solid rgba(0, 0, 0, 0.1);
+}
+
+.stores-section h3 {
+  color: var(--primary-dark);
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  font-size: 1.5rem;
+  text-align: center;
+}
+
+.add-store-form {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  align-items: flex-end;
+}
+
+.store-input {
+  width: 60%;
+  padding: 0.8rem;
+  border: 2px solid var(--primary-color);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  transition: var(--transition);
+}
+
+.store-input:focus {
+  border-color: var(--primary-dark);
+  box-shadow: 0 0 0 2px rgba(58, 123, 213, 0.2);
+  outline: none;
+}
+
+.save-store-btn {
+  width: 23%;
+  padding: 0.8rem;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  cursor: pointer;
+  transition: var(--transition);
+  grid-column: 1 / -1;
+}
+
+.save-store-btn:hover {
+  background-color: var(--primary-dark);
+}
+
+.stores-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.store-item {
+  background-color: var(--card-bg);
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: var(--border-radius);
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  transition: var(--transition);
+  box-shadow: var(--shadow);
+}
+
+.store-item:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.store-item strong {
+  color: var(--primary-dark);
+  font-size: 1.1rem;
+}
+
+.store-address {
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.store-provider {
+  color: var(--accent-color);
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: capitalize;
+}
+
+.no-stores {
+  text-align: center;
+  padding: 2rem;
+  color: var(--text-light);
+  font-style: italic;
+  grid-column: 1 / -1;
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: var(--border-radius);
+  border: 1px dashed rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .add-store-form {
+    grid-template-columns: 1fr;
+  }
+  
+  .stores-list {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 576px) {
+  .stores-section {
+    padding: 1rem;
+  }
+  
+  .store-input, .save-store-btn {
+    padding: 0.7rem;
+    font-size: 0.9rem;
+  }
+  
+  .store-item {
+    padding: 0.8rem;
+  }
+}

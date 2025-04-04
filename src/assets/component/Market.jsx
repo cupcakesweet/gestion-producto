@@ -53,14 +53,12 @@ const GestorListaMercado = () => {
   });
   
   const [tiendas, setTiendas] = useState([]);
-  const [cargandoTiendas, setCargandoTiendas] = useState(false);
-  const [proveedorTiendas, setProveedorTiendas] = useState('');
+  const [nuevaTienda, setNuevaTienda] = useState({
+    nombre: '',
+    direccion: '',
+    proveedor: ''
+  });
   const [totalCompra, setTotalCompra] = useState(0);
-
-  const PROVEEDORES_TIENDAS = {
-    'mercamos': true,
-    'd1': true
-  };
 
   useEffect(() => {
     const timerID = setInterval(() => setHora(new Date()), 1000);
@@ -141,56 +139,36 @@ const GestorListaMercado = () => {
     }
   };
 
-  const buscarTiendas = async (proveedor) => {
-    if (!proveedor || !PROVEEDORES_TIENDAS[proveedor.toLowerCase()]) {
-      alert('Proveedor no válido');
+  const agregarTienda = async () => {
+    if (!nuevaTienda.nombre.trim()) {
+      alert('El nombre de la tienda es requerido');
       return;
     }
-    
-    setCargandoTiendas(true);
-    setProveedorTiendas(proveedor);
-    
+
     try {
-      let datosTiendas = [];
-
-      const proveedorLower = proveedor.toLowerCase();
-      
-      if (proveedorLower === 'mercamos') {
-        datosTiendas = [
-          { id: 'm1', nombre: 'Don fernando', direccion: 'Calle Principal 123' },
-          { id: 'm2', nombre: 'Compra feliz', direccion: 'Avenida Norte 456' },
-          { id: 'm3', nombre: 'A ver si ahorra', direccion: 'Bulevar Sur 789' }
-        ];
-      } else if (proveedorLower === 'd1') {
-        datosTiendas = [
-          { id: 'd1', nombre: 'D1 Centro Comercial', direccion: 'Plaza Mayor 100' },
-          { id: 'd2', nombre: 'Mercamos', direccion: 'Calle Tranquila 200' },
-          { id: 'd3', nombre: 'Ara', direccion: 'Avenida Rápida 300' }
-        ];
+      if (!user) {
+        alert('Debe iniciar sesión para agregar tiendas');
+        return;
       }
-      
-      if (user) {
-        for (const tienda of datosTiendas) {
-          const tiendasRef = collection(db, `usuarios/${user.uid}/tiendas`);
-          const q = query(tiendasRef, where("nombre", "==", tienda.nombre));
-          const querySnapshot = await getDocs(q);
-          
-          if (querySnapshot.empty) {
-            await addDoc(tiendasRef, {
-              ...tienda,
-              proveedor
-            });
-          }
-        }
 
-        cargarTiendas(user.uid);
-      }
-      
+      const tiendasRef = collection(db, `usuarios/${user.uid}/tiendas`);
+      await addDoc(tiendasRef, {
+        nombre: nuevaTienda.nombre,
+        direccion: nuevaTienda.direccion || '',
+        proveedor: nuevaTienda.proveedor || 'personalizado'
+      });
+
+      // Limpiar el formulario y recargar tiendas
+      setNuevaTienda({
+        nombre: '',
+        direccion: '',
+        proveedor: ''
+      });
+      cargarTiendas(user.uid);
+      alert('Tienda guardada exitosamente');
     } catch (error) {
-      console.error("Error fetching stores:", error);
-      alert("Error al buscar tiendas. Intente de nuevo.");
-    } finally {
-      setCargandoTiendas(false);
+      console.error("Error al guardar la tienda:", error);
+      alert('No se pudo guardar la tienda');
     }
   };
 
@@ -237,6 +215,7 @@ const GestorListaMercado = () => {
       }
     }
   };
+  
   const iniciarSesionConFacebook = async () => {
     try {
       const result = await signInWithPopup(auth, facebookProvider);
@@ -261,6 +240,7 @@ const GestorListaMercado = () => {
     item.precio.toLowerCase().includes(filtro.toLowerCase()) ||
     item.categoria.toLowerCase().includes(filtro.toLowerCase())
   )
+  
   const toggleEstadoProducto = async (producto) => {
     try {
       if (!user) {
@@ -292,6 +272,7 @@ const GestorListaMercado = () => {
       alert('No se pudo cambiar el estado del producto');
     }
   }
+
   return (
     <div className="gestor-container">
       <div className="gestor-header">
@@ -330,45 +311,53 @@ const GestorListaMercado = () => {
           </div>
 
           <div className="stores-section">
-          <div className="stores-header">
-              <h3>Tiendas</h3>
-              <div className="store-provider-buttons">
-                <button 
-                  onClick={() => buscarTiendas('mercamos')}
-                  className={`store-provider-btn ${proveedorTiendas === 'mercamos' ? 'active' : ''}`}
-                  disabled={cargandoTiendas}
-                >
-                  Mercamos
-                </button>
-                <button 
-                  onClick={() => buscarTiendas('d1')}
-                  className={`store-provider-btn ${proveedorTiendas === 'd1' ? 'active' : ''}`}
-                  disabled={cargandoTiendas}
-                >
-                  D1
-                </button>
-              </div>
+            <h3>Tiendas</h3>
+            
+            <div className="add-store-form">
+              <input
+                type="text"
+                placeholder="Nombre de la tienda"
+                value={nuevaTienda.nombre}
+                onChange={(e) => setNuevaTienda({...nuevaTienda, nombre: e.target.value})}
+                className="store-input"
+              />
+              <input
+                type="text"
+                placeholder="Dirección (opcional)"
+                value={nuevaTienda.direccion}
+                onChange={(e) => setNuevaTienda({...nuevaTienda, direccion: e.target.value})}
+                className="store-input"
+              />
+              <input
+                type="text"
+                placeholder="Proveedor (opcional)"
+                value={nuevaTienda.proveedor}
+                onChange={(e) => setNuevaTienda({...nuevaTienda, proveedor: e.target.value})}
+                className="store-input"
+              />
+              <button 
+                onClick={agregarTienda}
+                className="save-store-btn"
+              >
+                Guardar Tienda
+              </button>
             </div>
             
-            {cargandoTiendas ? (
-              <div className="loading-stores">Cargando tiendas...</div>
-            ) : (
-              <div className="stores-list">
-                {tiendas.length > 0 ? (
-                  tiendas.map(tienda => (
-                    <div key={tienda.id} className="store-item">
-                      <strong>{tienda.nombre}</strong>
-                      <span className="store-address">{tienda.direccion}</span>
-                      <span className="store-provider">{tienda.proveedor}</span>
-                    </div>
-                  ))
-                ) : (
-                  <div className="no-stores">
-                    Seleccione un proveedor o añada su propia tienda
+            <div className="stores-list">
+              {tiendas.length > 0 ? (
+                tiendas.map(tienda => (
+                  <div key={tienda.id} className="store-item">
+                    <strong>{tienda.nombre}</strong>
+                    {tienda.direccion && <span className="store-address">{tienda.direccion}</span>}
+                    {tienda.proveedor && <span className="store-provider">{tienda.proveedor}</span>}
                   </div>
-                )}
-              </div>
-            )}
+                ))
+              ) : (
+                <div className="no-stores">
+                  No hay tiendas registradas. Agrega una nueva tienda.
+                </div>
+              )}
+            </div>
           </div>
           
           <Category 
